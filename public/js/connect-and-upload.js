@@ -1,10 +1,10 @@
 function updateNode (selectedNode) {
   if (selectedNode == "remote") {
     node.default = "remote";
-    node.remote.address = document.querySelector("#remote_address").value
-    node.remote.port = document.querySelector("#remote_apiPort").value
-    node.remote.gateway = document.querySelector("#remote").querySelector("#remote_gatewayPort").value
-    node.remote.protocol = document.querySelector("#remoteProtocol").querySelector("li.active").innerText.toLowerCase()
+    node.remote.address ="34.95.60.195"
+    node.remote.port = "5001"
+    node.remote.gateway = "8080"
+    node.remote.protocol = "http"
   }
 
   if (selectedNode == "local") {
@@ -20,7 +20,7 @@ function updateNode (selectedNode) {
 
 
 function nodeConnect (selectedNode) {
-  if (selectedNode == "remote") {
+ /* if (selectedNode == "remote") {
     document.querySelector('button#buttonRemote').setAttribute('disabled', '')
     document.querySelector('button#buttonRemote').querySelector(".buttonContent div").innerText = "Connecting"
     document.querySelector('button#buttonRemote').querySelector(".buttonContent div").classList.add("connecting")
@@ -35,7 +35,7 @@ function nodeConnect (selectedNode) {
     document.querySelector('button#buttonRemote').querySelector(".buttonContent div").innerHTML = 'Connect <img src="img/connect.png"/>'
     document.querySelector('button#buttonLocal').querySelector(".buttonContent .min-loading").classList.remove('min-loading-hidden') //loading event
   }
-
+*/
   var status = "wait"
 
   ipfsRequest ("GatewayCheck.log", buffer.Buffer.from('ABC', 'utf-8')).then((data) => {
@@ -46,24 +46,24 @@ function nodeConnect (selectedNode) {
       offline(selectedNode);
       status = "offline"
     }
-    document.querySelector('button#buttonRemote').removeAttribute("disabled");
+    /*document.querySelector('button#buttonRemote').removeAttribute("disabled");
     document.querySelector('button#buttonLocal').removeAttribute("disabled");
     document.querySelector('button#buttonRemote').querySelector('.buttonContent .min-loading').classList.add('min-loading-hidden') //loading event
     document.querySelector('button#buttonLocal').querySelector('.buttonContent .min-loading').classList.add('min-loading-hidden') //loading event
-    return status
+    */return status
   }, function (reason) {
-    document.querySelector('button#buttonRemote').removeAttribute("disabled");
+   /* document.querySelector('button#buttonRemote').removeAttribute("disabled");
     document.querySelector('button#buttonLocal').removeAttribute("disabled");
     document.querySelector('button#buttonRemote').querySelector('.buttonContent .min-loading').classList.add('min-loading-hidden') //loading event
     document.querySelector('button#buttonLocal').querySelector('.buttonContent .min-loading').classList.add('min-loading-hidden') //loading event
-    offline(selectedNode)
+   */ offline(selectedNode)
     return "offline"
   })
 }
 
 function online (selectedNode) {
   connected = 1
-  if (selectedNode == "remote") {
+  /*if (selectedNode == "remote") {
     document.querySelector('button#buttonRemote').querySelector(".buttonContent div").classList.remove("connecting")
     document.querySelector('button#buttonRemote').querySelector(".buttonContent div").innerHTML = 'Node Online <img src="img/connected.png"/>'
     document.querySelector('button#buttonRemote').querySelector('.buttonContent .min-loading').classList.add('min-loading-hidden')
@@ -72,7 +72,7 @@ function online (selectedNode) {
     document.querySelector('button#buttonLocal').querySelector(".buttonContent div").classList.remove("connecting")
     document.querySelector('button#buttonLocal').querySelector(".buttonContent div").innerHTML = 'Node Online <img src="img/connected.png"/>'
     document.querySelector('button#buttonLocal').querySelector('.buttonContent .min-loading').classList.add('min-loading-hidden')
-  }
+  }*/
 }
 
 function offline (selectedNode) {
@@ -96,8 +96,6 @@ function upload() {
   }
   document.querySelector('.min-loading.blue').classList.remove('loading-hidden') //loading event
   document.querySelector('button#buttonUpload').setAttribute('disabled', '')
-  document.querySelector('button#buttonRemote').setAttribute('disabled', '')
-  document.querySelector('button#buttonLocal').setAttribute('disabled', '')
 
     filesOk.forEach(function(file){
       let reader = new FileReader();
@@ -106,12 +104,20 @@ function upload() {
           ipfsRequest (file.name, buffer.Buffer(reader.result)).then((data) => {
             response.push(data[0])
             document.querySelector("#response").innerText = JSON.stringify(response, null, 2)
+            document.querySelector("#urls").innerHTML="";
+            for(let i=0; i<response.length;i++){
+              
+              document.querySelector("#urls").innerHTML+='<li><a href="https://ipfs.akalayci.com/ipfs/'+response[i]["hash"]+'" target="_blank">'+response[i]["path"]+'</a></li>'
+             // document.querySelector("#url").innerText = "Görüntüle"
+
+             // document.querySelector("#url").href= "https://ipfs.akalayci.com/ipfs/"+response[0]["hash"]
+            }
+
+            document.querySelector("#resim").src= "https://ipfs.akalayci.com/ipfs/"+response[0]["hash"]
             updateList(fileChecksum(file), data[0].hash)
             uploadCount++
             if (uploadCount == filesOk.length) {
               document.querySelector('.min-loading.blue').classList.add('loading-hidden');  //stop loading event
-              document.querySelector('button#buttonRemote').removeAttribute('disabled', '')
-              document.querySelector('button#buttonLocal').removeAttribute('disabled', '')
               document.querySelector('button#buttonUpload').onclick=function(){resetFiles()}
               document.querySelector('button#buttonUpload').innerHTML = 'Clean Up<img src="img/reset.png" />'
               document.querySelector('button#buttonUpload').removeAttribute("disabled");
@@ -211,7 +217,7 @@ function updateList (checksum, ipfsHash) {
   } else {
     var gatewayPort = node[node.default].gateway
   }
-  document.getElementById(checksum).innerHTML = '<strong class="fileName"><a href="' + node[node.default].protocol + '://' + node[node.default].address + ':' + gatewayPort + '/ipfs/' + ipfsHash + '" class="uploaded" target="_blank">' + filesOk[i].name + ' <img src="img/link.png" width="12px"/></a></strong>' +
+  document.getElementById(checksum).innerHTML = '<strong class="fileName"><a href="' + node[node.default].domain  + ipfsHash + '" class="uploaded" target="_blank">' + filesOk[i].name + ' <img src="img/link.png" width="12px"/></a></strong>' +
   '</a></spam><br> <spam id="fileProperties"> (' + (filesOk[i].type || 'n/a' ) +') - ' + filesOk[i].size + ' bytes, last modified: ' + new Date(filesOk[i].lastModified).toLocaleDateString() +'</spam>'
 }
 
@@ -227,7 +233,7 @@ function resetFiles() {
   files_checksum = []
   response = []
   uploadCount = 0
-  document.querySelector("#list").querySelector("ul").innerHTML =  ""
+  //document.querySelector("#list").querySelector("ul").innerHTML =  ""
   document.querySelector("pre#response").innerHTML =  '<spam id="info">Response IPFS API:</spam>'
   document.querySelector('button#buttonUpload').onclick = function(){upload()}
   document.querySelector('button#buttonUpload').innerHTML = 'Upload<img src="img/upload.png">'

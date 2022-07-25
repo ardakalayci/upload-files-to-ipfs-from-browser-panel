@@ -1,4 +1,4 @@
-//set default remote Node
+/*//set default remote Node
 document.getElementById("remote_address").value = node.remote.address;
 document.getElementById("remote_apiPort").value = node.remote.port;
 document.getElementById("remote_gatewayPort").value = node.remote.gateway;
@@ -38,4 +38,4 @@ function changeProtocol (selectedNode, protocol) {
     document.querySelector("#"+selectedNode).querySelector("#https").className = "tab"
     document.querySelector("#"+selectedNode).querySelector("#http").className += " active"
   }
-}
+}*/

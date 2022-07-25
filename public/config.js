@@ -9,9 +9,11 @@ const node = {
 	// default remote Node
 	default: 'remote',
 	remote: {
-		address: 'ipfs.infura.io',
+		domain:"https://ipfs.akalayci.com/ipfs/"
+,
+		address: '34.95.60.195',
 		...config,
-		protocol: 'https'
+		protocol: 'http'
 	},
 
 	// default local node
